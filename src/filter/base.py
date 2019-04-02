@@ -14,6 +14,10 @@ class Filter(ABC):
     _list_path =[]
     _aggregations = {}
     _selected = []
+    @ABC.abstractmethod
+    def filter_name:
+        return
+
 
     def __init__(self):
         self._path = ''
