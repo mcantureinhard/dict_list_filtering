@@ -1,6 +1,6 @@
 
 
-class OfferFilters:
+class DictFilters:
     _filters = []
     _buckets = []
     _strict_filter = True
