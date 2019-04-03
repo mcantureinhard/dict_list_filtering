@@ -14,16 +14,23 @@ class Filter(ABC):
     _list_path =[]
     _aggregations = {}
     _selected = []
+
     @ABC.abstractmethod
     def filter_name:
         return
 
+    # Override to provide name mapping for filters
+    def _agg_name_map(self):
+        return {}
 
     def __init__(self):
         self._path = ''
 
-    def set_selected(self, selected: list):
+    def set_selected(self, selected: list) -> int:
+        current_selected = len(self._selected)
+        new_selected = len(selected)
         self._selected = selected
+        return new_selected - current_selected
 
     def _get_value(self, element, path):
         if len(path) == 0:
@@ -76,3 +83,20 @@ class Filter(ABC):
                 self._aggregations[value] = self._aggregations[value] + 1
             else:
                 self._aggregations[value] = 1
+
+    def _build_filters_output(self):
+        filters = {}
+        name_map = self._agg_name_map()
+        for agg, val in self._aggregations.items():
+            filters[agg] = {
+                "count": val,
+                "selected": agg in self._selected,
+                "text" : name_map[agg] if agg in name_map else agg
+            }
+        return filters
+
+    def output(self) -> dict:
+        filter = {
+            "name": self.filter_name,
+            "filters": self._build_filters_output()
+        }
